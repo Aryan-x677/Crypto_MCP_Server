@@ -1,53 +1,73 @@
-📘 Crypto MCP Server
+# 🚀 Crypto MCP Server
+## 📌 Overview
 
-A Model Context Protocol (MCP) server that exposes cryptocurrency market data tools (Ticker, OHLCV, and Streaming Ticker).
-Built using Python, ccxt, and a fully modular tool architecture with extensive error handling, caching, and pytest test coverage.
+Crypto MCP Server is a Model Context Protocol (MCP) compatible server that provides real-time and historical cryptocurrency market data using ccxt.
+It exposes three fully tested tools:
 
-🚀 Features
-✔️ 1. Real-Time Market Data Tools
+get_ticker → Live price & market summary
 
-The server exposes three tools:
+get_ohclv → Historical candlestick data
 
+stream_ticker → Real-time price streaming (async generator)
+
+The project includes:
+
+Custom error handling
+
+In-memory caching
+
+A lightweight MCP server architecture
+
+Complete test suite (pytest)
+
+Local client for manual testing
+
+## ✨ Features
 🔹 get_ticker
 
-Fetches the latest ticker data:
+Fetches:
 
-Last price
+last price
 
-High / Low
+high & low
 
-Volume
+base volume
 
-% Change
+price_change_percent
 
 🔹 get_ohclv
 
-Returns candlestick data (Open, High, Low, Close, Volume) with:
+Fetches OHLCV candles with:
 
-Custom timeframe support
+timestamp
 
-Limit parameter
+open
 
-Per-exchange validation
+high
+
+low
+
+close
+
+volume
 
 🔹 stream_ticker
 
-Streams ticker updates every N seconds using async generators.
+Real-time streaming ticker with async generator that yields updates every N seconds.
 
-🧩 Project Structure
+## 🧩 Project Structure
 crypto-mcp-server/
 │
 ├── server/
-│   ├── tools/
-│   │   ├── get_ticker.py
-│   │   ├── get_ohclv.py
-│   │   └── stream_ticker.py
-│   │
-│   ├── exchanges.py
+│   ├── main.py
+│   ├── mcp_server.py
 │   ├── cache.py
 │   ├── errors.py
-│   ├── mcp_server.py
-│   └── main.py
+│   ├── exchanges.py
+│   └── tools/
+│       ├── get_ticker.py
+│       ├── get_ohclv.py
+│       └── stream_ticker.py
 │
 ├── tests/
 │   ├── test_get_ticker.py
@@ -55,112 +75,150 @@ crypto-mcp-server/
 │   └── test_stream_ticker.py
 │
 ├── client_test.py
+├── README.md
 ├── requirements.txt
-└── README.md
+└── .gitignore
 
-🛠️ Technologies Used
+## 🛠️ Tech Stack
 
 Python 3.10+
 
-ccxt — crypto market data library
+ccxt for exchange APIs
 
-pytest + pytest-asyncio
+pytest for testing
 
 asyncio for streaming
 
-Custom caching system
+MCP server protocol style
 
-Custom error classes
-
-📦 Installation
-git clone https://github.com/YOUR_USERNAME/crypto-mcp-server.git
+## 📦 Installation
+git clone https://github.com/yourusername/crypto-mcp-server
 cd crypto-mcp-server
-python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-🧪 Running Tests
+## ▶️ Running the MCP Server
 
-This project includes 100% test coverage for:
+From the server/ directory:
 
-get_ticker
-
-get_ohclv
-
-stream_ticker
-
-Run tests using:
-
-pytest
+python -m server.main
 
 
-Expected output:
+You should see:
 
-8 passed in X.XXs
+Crypto MCP Server running…
+Registered tools: get_ticker, get_ohclv, stream_ticker
 
-🖥️ Running the Local Test Client
+## 🧪 Running Tests
 
-A simple local script (client_test.py) directly imports your tools and executes them (no need for MCP CLI).
+All tests are under tests/ and cover:
+
+Valid/invalid symbols
+
+Unsupported exchanges
+
+API errors
+
+Streaming behavior
+
+Run:
+
+pytest -vv
+
+## 📁 Tools Implemented
+### 🔹 get_ticker
+
+Handles:
+
+Invalid symbols
+
+Unsupported exchanges
+
+ccxt API exceptions
+
+Caching responses for 20 seconds
+
+### 🔹 get_ohclv
+
+Returns OHCLV historical candles
+
+Validates timeframe & limit
+
+Raises custom errors
+
+### 🔹 stream_ticker
+
+Async generator
+
+Streams live ticker updates
+
+Internal delay using asyncio.sleep()
+
+Full validation & error handling
+
+### Caching Layer
+
+cache.py implements simple in-memory TTL cache:
+
+save(key, value, ttl)
+
+get(key)
+
+Prevents extra API calls
+
+## 🧪 Testing Strategy
+### Unit Tests (pytest)
+
+Each tool has:
+
+success test
+
+invalid symbol test
+
+invalid exchange test
+
+API failure test
+
+### Streaming Tests
+
+Uses asyncio.mark
+
+Simulates multiple ticker updates
+
+Checks generator behavior
+
+## 🧪 Local Testing Without MCP CLI
 
 Run:
 
 python client_test.py
 
 
-Example output:
+It prints:
 
+get_ticker result
+
+get_ohclv candles
+
+3 streamed ticker updates
+
+## 🔍 Example Output
 --- Testing get_ticker ---
-{ ...result... }
+{...}
 
 --- Testing get_ohclv ---
-{ ...candles... }
+{...}
 
 --- Testing stream_ticker ---
-{ ...updates... }
+{...}
 
-🧠 How It Works (Short Summary)
-1. The MCP Server Registry
+## 📌 Key Learning & Highlights
 
-Each tool is registered with:
+Designed full MCP-style server
 
-Name
+Implemented async streaming tool
 
-Handler function
+Wrote complete test suite
 
-Input schema
+Built caching + error handling abstraction
 
-Output schema
-
-Defined inside CryptoMCPServer.
-
-2. Tools Are Fully Validated
-
-Every tool includes:
-
-Exchange validation
-
-Symbol validation
-
-Timeframe validation
-
-Limit validation
-
-Network error handling
-
-ccxt exception wrappers
-
-3. Caching Layer
-
-Reduces redundant API calls for:
-
-Tickers
-
-OHLCV
-
-4. Async Streaming
-
-stream_ticker uses:
-
-while True:
-    yield ticker
-    await asyncio.sleep(interval)
+Validated exchange + symbol inputs safely
